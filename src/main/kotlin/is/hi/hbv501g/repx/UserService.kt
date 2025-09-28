@@ -1,5 +1,10 @@
-package is.hi.hbv501g.repx
+package `is`.hi.hbv501g.repx
 
+import `is`.hi.hbv501g.repx.CreateUserRequest
+import `is`.hi.hbv501g.repx.User
+import `is`.hi.hbv501g.repx.UserDTO
+import `is`.hi.hbv501g.repx.UserRepository
+import `is`.hi.hbv501g.repx.toDTO
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
