@@ -1,12 +1,12 @@
-package is.hi.hbv501g.repx
+package `is`.hi.hbv501g.repx
 
 import jakarta.persistence.*
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 @Entity
 @Table(name = "users")
-data class User(
+data class User (
     @Id @GeneratedValue var id: UUID? = null,
     @Column(nullable = false, unique = true) var email: String = "",
     @Column(name = "password_hash", nullable = false) var passwordHash: String = "",

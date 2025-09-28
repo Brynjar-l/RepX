@@ -1,13 +1,13 @@
-package is.hi.hbv501g.repx
+package `is`.hi.hbv501g.repx
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.util.UUID
+import java.util.*
 
 @RestController
 @RequestMapping("/api/users")
-class UserController(private val service: UserService) {
+class UserController (private val service: UserService) {
 
     @PostMapping
     fun create(@RequestBody req: CreateUserRequest): ResponseEntity<Any> =

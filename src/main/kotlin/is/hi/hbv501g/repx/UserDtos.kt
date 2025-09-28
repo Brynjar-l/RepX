@@ -1,7 +1,7 @@
-package is.hi.hbv501g.repx
+package `is`.hi.hbv501g.repx
 
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 data class CreateUserRequest(
     val email: String,

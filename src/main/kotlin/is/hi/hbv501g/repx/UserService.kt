@@ -1,13 +1,13 @@
-package is.hi.hbv501g.repx
+package `is`.hi.hbv501g.repx
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 @Service
-class UserService(private val repo: UserRepository) {
+class UserService (private val repo: UserRepository) {
     private val encoder = BCryptPasswordEncoder()
     private val emailRegex = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
 
