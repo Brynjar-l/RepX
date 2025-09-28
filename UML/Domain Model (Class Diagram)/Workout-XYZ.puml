@@ -1,0 +1,23 @@
+@startuml
+!include ../_conf.puml!0
+    class WorkoutRoutine {
+        -RoutineId: Int
+        -name: String
+        -description: String
+    }
+    note top of WorkoutRoutine
+        a workout Routine is a <b>sequence</b> of <b>exercises<b>,
+        plus an optional target <i>set</i> and <i>rep</i> count,
+        and rest time between each exercise, defined for each execise.
+    end note
+
+
+    
+'    class AdhocWorkoutRoutine extends WorkoutRoutine {}
+'    class BlueprintWorkoutRoutine extends WorkoutRoutine {}
+'    class CompletedWorkoutRoutine extends WorkoutRoutine {}
+
+
+
+
+@enduml

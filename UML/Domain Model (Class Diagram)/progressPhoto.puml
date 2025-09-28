@@ -1,0 +1,10 @@
+@startuml
+    class ProgressPhoto {
+        + photoId: UUID
+        + userId: UUId
+		+ timeDate: TimeDate
+		+ caption: String?
+		+ mimeType: String
+		+ sizeInBytes: Int
+    }
+@enduml
