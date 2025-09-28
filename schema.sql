@@ -1,3 +1,5 @@
+
+
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 CREATE EXTENSION IF NOT EXISTS citext;
 
@@ -124,6 +126,3 @@ CREATE OR REPLACE VIEW v_recent_workouts AS
 SELECT w.*
 FROM workouts w
 ORDER BY w.start_time DESC;
-
-repx_app;
-
