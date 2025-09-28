@@ -1,0 +1,5 @@
+@startuml
+    title RepX: Design Model
+	!include jot.puml
+	!include progressPhoto.puml
+@enduml
