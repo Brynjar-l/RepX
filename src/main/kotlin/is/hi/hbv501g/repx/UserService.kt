@@ -1,10 +1,5 @@
 package `is`.hi.hbv501g.repx
 
-import `is`.hi.hbv501g.repx.CreateUserRequest
-import `is`.hi.hbv501g.repx.User
-import `is`.hi.hbv501g.repx.UserDTO
-import `is`.hi.hbv501g.repx.UserRepository
-import `is`.hi.hbv501g.repx.toDTO
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -17,6 +12,7 @@ class UserService (private val repo: UserRepository) {
     private val emailRegex = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
 
     @Transactional
+    /** Creates user after some checks. Returns DTO. */
     fun createUser(req: CreateUserRequest): UserDTO {
         val email = req.email.trim().lowercase()
         require(emailRegex.matches(email)) { "invalid_email" }
@@ -33,6 +29,7 @@ class UserService (private val repo: UserRepository) {
     }
 
     @Transactional
+    /** Deletes user by id. True if found. */
     fun deleteUser(id: UUID): Boolean {
         if (!repo.existsById(id)) return false
         repo.deleteById(id); return true

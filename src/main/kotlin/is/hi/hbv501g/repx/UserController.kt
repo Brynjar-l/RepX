@@ -1,6 +1,5 @@
 package `is`.hi.hbv501g.repx
 
-import `is`.hi.hbv501g.repx.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -11,6 +10,7 @@ import java.util.*
 class UserController (private val service: UserService) {
 
     @PostMapping
+    /** Create a new User. Returns response with result or error. */
     fun create(@RequestBody req: CreateUserRequest): ResponseEntity<Any> =
         runCatching { service.createUser(req) }.fold(
             onSuccess = { ResponseEntity.status(HttpStatus.CREATED).body(it) },
@@ -25,6 +25,7 @@ class UserController (private val service: UserService) {
         )
 
     @DeleteMapping("/{id}")
+    /** Delete user by id. Returns "error" or "user_not_found". */
     fun delete(@PathVariable id: UUID): ResponseEntity<Any> =
         if (service.deleteUser(id)) ResponseEntity.noContent().build()
         else ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("error" to "user_not_found"))
