@@ -1,5 +1,94 @@
 @startuml
-    title RepX: Design Model
-	!include jot.puml
-	!include progressPhoto.puml
+		title RepX: Domain Model
+
+		skinparam linetype ortho
+		skinparam classAttributeIconSize 0
+		skinparam DiagonalCorner 10
+		skinparam RoundCorner 3
+		skinparam groupInheritance 3
+		top to bottom direction
+
+		!startsub SETS
+				class Set <<POJO>> {
+						setNumber: Int
+						setType: SetType
+						exerciseId: UUID
+						reps: Int
+						weight: Double
+						SetNotes: String?
+				}
+
+				enum SetType <<Enum>> {
+						WARMUP
+						NORMAL
+						DROPSET
+						FAILURE
+				}
+		!endsub
+
+		!startsub Exercise
+					abstract class AbstractExercise <<abstract>> {
+					ExerciseId: UUID
+				}
+
+				class SystemExercise <<POJO>> {}
+				class UserExercise <<POJO>> {}
+
+				enum ExerciseType <<enum>> {
+						CARDIO
+						STRENGTH
+						MOBILITY
+				}
+		!endsub
+
+		!startsub note
+				interface "Note<T>" {
+						attachTargetType: <T>
+						targetId: UUID
+						NoteMessage: String?
+				}
+
+				class "ExerciseNote<Exercise>" implements "Note<T>" {}
+				class "SessionNote<WorkoutSession>" implements "Note<T>" {}
+		!endsub
+
+		class User {
+				userId: UUID
+		}
+
+		class WorkoutRoutine <<POJO>> {}
+
+		class ProgressPhoto {
+				+ photoId: UUID
+				+ userId: UUId
+				+ timeDate: TimeDate
+				+ caption: String?
+				+ mimeType: String
+				+ sizeInBytes: Int
+		}
+
+		abstract class WorkoutSession <<abstract>> {
+				+SessionId: UUID
+				+**userId: UUID
+				+**sourceRoutineId: UUID?
+				--
+				+date: Date?
+				+startTime: Time?
+				+endTime: Time?
+				--
+				+ExercisesList: List<Exercises>
+				+Notes: List<Note<T>>
+		}
+
+		class ActiveWorkoutSession <<POJO>> {}
+		class CompletedWorkoutSession <<POJO>> {}
+
+		AbstractExercise <|-- SystemExercise
+		AbstractExercise <|-- UserExercise
+		WorkoutSession <|-- ActiveWorkoutSession
+		WorkoutSession <|-- CompletedWorkoutSession
+
+		WorkoutSession "1" -- "0..*" Set
+		AbstractExercise --> ExerciseType
+		Set --l-> SetType
 @enduml

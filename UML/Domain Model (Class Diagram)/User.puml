@@ -1,5 +1,0 @@
-@startuml
-	class User {
-		userId: UUID
-	}
-@enduml
