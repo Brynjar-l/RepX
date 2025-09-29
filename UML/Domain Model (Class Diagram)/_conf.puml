@@ -1,7 +1,0 @@
-@startuml
-
-    !theme lightgray
-    'carbon-gray 'blueprint
-    skinparam DiagonalCorner 10
-    skinparam RoundCorner 3
-@enduml
