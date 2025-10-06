@@ -1,4 +1,4 @@
-package `is`.hi.hbv501g.repx
+package `is`.hi.hbv501g.repx.users.domain
 
 import jakarta.persistence.*
 import java.time.Instant
