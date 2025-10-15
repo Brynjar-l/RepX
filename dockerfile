@@ -1,18 +1,19 @@
-FROM eclipse-temurin:23-jdk AS build
-WORKDIR /repx
+FROM maven:3.9.8-eclipse-temurin-21 AS build
+WORKDIR /app
+COPY pom.xml .
+RUN mvn -q -DskipTests dependency:go-offline
+COPY . .
+RUN mvn -q -DskipTests clean package
 
-COPY mvnw pom.xml ./
-COPY .mvn .mvn
-RUN chmod +x mvnw && ./mvnw -B -DskipTests dependency:go-offline
+FROM eclipse-temurin:21-jre
+WORKDIR /app
 
-COPY src src
-RUN ./mvnw -B -DskipTests package
+RUN useradd -ms /bin/bash appuser
+USER appuser
 
-FROM eclipse-temurin:23-jre
-ENV PORT=8081
-WORKDIR /opt/repx
+COPY --from=build /app/target/*.jar /app/app.jar
 
-COPY --from=build /repx/target/*-SNAPSHOT.jar repx.jar
+ENV SPRING_PROFILES_ACTIVE=prod
+EXPOSE 8080
 
-EXPOSE 8081
-ENTRYPOINT ["sh","-c","java -Dserver.port=${PORT} -Djava.security.egd=file:/dev/./urandom -jar repx.jar"]
+CMD ["java", "-jar", "/app/app.jar"]
