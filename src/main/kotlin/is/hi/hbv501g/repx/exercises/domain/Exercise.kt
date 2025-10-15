@@ -1,24 +1,28 @@
 package `is`.hi.hbv501g.repx.exercises.domain
 
 import jakarta.persistence.*
-import java.util.*
+import java.time.OffsetDateTime
+import java.util.UUID
 
 @Entity
-@Table(name = "exercises")
+@Table(name = "exercises", uniqueConstraints = [UniqueConstraint(columnNames = ["name"])])
 class Exercise(
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    var id: UUID? = null,
+    @Column(nullable = false, updatable = false)
+    var id: UUID = UUID.randomUUID(),
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, length = 120)
     var name: String,
 
-    @Column(name = "primary_muscle")
-    var primaryMuscle: String? = null,
+    @Column(nullable = true, length = 60)
+    var bodyPart: String? = null,
 
+    @Column(nullable = true, length = 120)
     var equipment: String? = null,
-    var difficulty: String? = null,
 
-    @Column(name = "is_public", nullable = false)
-    var isPublic: Boolean = true
+    @Column(columnDefinition = "text")
+    var description: String? = null,
+
+    @Column(nullable = false)
+    var createdAt: OffsetDateTime = OffsetDateTime.now()
 )
