@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.UUID
 
 @RestController
-@RequestMapping("/api/workouts")
+@RequestMapping("/workouts")
 class WorkoutController(
     private val service: WorkoutService
 ) {
