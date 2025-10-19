@@ -64,16 +64,16 @@ Can set baseURL as `http://localhost:8080/`
 ## Contributors:
 #### **Brynjar**: 
   - HÍ: [brs87@hi.is](mailto:brs87@hi.is)
-  - Github: [Brynjar-l](https://github.com/)
+  - Github: [Brynjar-l](https://github.com/Brynjar-l)
 #### **Halla**:
   - HÍ: [hts11@hi.is](mailto:hts11@hi.is)
-  - Github: [x](https://github.com/)
+  - Github: [hallasvans](https://github.com/hallasvans)
 #### **Ignas**:
   - HÍ: [igp4@hi.is](mailto:igp4@hi.is)
-  - Github: [y](https://github.com/)
+  - Github: [NASPA365](https://github.com/NASPA365)
 #### **Styrmir**:
   - HÍ: [soa61@hi.is](mailto:soa61@hi.is)
-  - Github: [z](https://github.com/)
+  - Github: [stimmi1986](https://github.com/stimmi1986)
 
 
 ## Project Milestones and Responsibilities:
