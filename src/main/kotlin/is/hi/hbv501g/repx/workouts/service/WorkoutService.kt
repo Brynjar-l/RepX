@@ -70,6 +70,11 @@ class WorkoutService(
     @Transactional(readOnly = true)
     fun list(pageable: Pageable): Page<WorkoutDTO> =
         workoutRepo.findAll(pageable).map { it.toDTO() }
+    
+    @Transactional(readOnly = true)
+    fun listByUser(userId: UUID, pageable: Pageable): Page<WorkoutDTO> =
+        workoutRepo.findByUserId(userId, pageable).map { it.toDTO() }
+
 
     @Transactional
     fun delete(id: UUID): Boolean =
