@@ -1,5 +1,3 @@
-
-
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 CREATE EXTENSION IF NOT EXISTS citext;
 
@@ -108,7 +106,7 @@ CREATE TABLE IF NOT EXISTS progress_photos (
   user_id    UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
   taken_at   TIMESTAMPTZ NOT NULL,
   caption    TEXT,
-  media_key  TEXT NOT NULL,     -- storage key/path
+  media_key  TEXT NOT NULL,
   mime_type  TEXT NOT NULL,
   size_bytes BIGINT CHECK (size_bytes IS NULL OR size_bytes >= 0)
 );
