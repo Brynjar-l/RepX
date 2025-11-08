@@ -11,8 +11,7 @@ class WebConfig : WebMvcConfigurer {
             .allowedOriginPatterns(
                 "http://localhost:3000",
                 "http://localhost:5173",
-                "https://tester-g0ka.onrender.com/",
-                "https://repx_m38y.onrender.com/"
+                "https://tester-pied-six.vercel.app/"
             )
             .allowedMethods("GET","POST","PUT","PATCH","DELETE","OPTIONS")
             .allowedHeaders("*")
