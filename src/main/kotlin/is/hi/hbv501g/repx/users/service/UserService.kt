@@ -8,18 +8,22 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
-import java.util.UUID
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
+import java.util.*
 
 @Service
 class UserService(private val repo: UserRepository) {
     private val encoder = BCryptPasswordEncoder()
 
-    @Transactional
     fun createUser(req: CreateUserRequest): UserDTO {
+        val emailNorm = req.email.trim().lowercase()
+
+        if (repo.existsByEmail(emailNorm)) throw IllegalArgumentException("email_taken")
+
         val user = User(
-            email = req.email.trim().lowercase(),
+            email = emailNorm,
             passwordHash = encoder.encode(req.password),
             displayName = req.displayName,
             createdAt = Instant.now()
@@ -27,15 +31,11 @@ class UserService(private val repo: UserRepository) {
         return repo.save(user).toDTO()
     }
 
-    @Transactional
     fun deleteUser(id: UUID): Boolean =
         repo.findById(id).map { repo.delete(it); true }.orElse(false)
 
-    @Transactional(readOnly = true)
-    fun getUser(id: UUID): UserDTO? =
-        repo.findById(id).orElse(null)?.toDTO()
+    fun getUser(id: UUID): UserDTO? = repo.findById(id).orElse(null)?.toDTO()
 
-    @Transactional(readOnly = true)
     fun listUsers(pageable: Pageable): Page<UserDTO> =
         repo.findAll(pageable).map { it.toDTO() }
 }
@@ -44,5 +44,5 @@ private fun User.toDTO() = UserDTO(
     id = this.id!!,
     email = this.email,
     displayName = this.displayName,
-    createdAt = this.createdAt
+    createdAt = this.createdAt.atOffset(ZoneOffset.UTC)
 )
