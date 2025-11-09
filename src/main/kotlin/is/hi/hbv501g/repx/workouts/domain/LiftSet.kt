@@ -1,25 +1,34 @@
 package `is`.hi.hbv501g.repx.workouts.domain
 
 import jakarta.persistence.*
-import java.util.*
+import java.math.BigDecimal
+import java.util.UUID
 
 @Entity
 @Table(name = "sets")
-class LiftSet(
+data class SetEntity(
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    var id: UUID? = null,
+    @Column(columnDefinition = "uuid")
+    val id: UUID? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "workout_exercise_id", nullable = false)
-    var workoutExercise: WorkoutExercise,
+    @Column(name = "workout_exercise_id", nullable = false, columnDefinition = "uuid")
+    val workoutExerciseId: UUID,
 
     @Column(name = "set_index", nullable = false)
-    var setIndex: Int,
+    val setIndex: Int = 1,
 
-    var reps: Int? = null,
-    @Column(name = "weight_kg") var weightKg: Double? = null,
-    var rir: Int? = null,
-    @Column(name = "duration_sec") var durationSec: Int? = null,
-    var notes: String? = null
+    @Column(name = "reps")
+    val reps: Int? = null,
+
+    @Column(name = "weight_kg", columnDefinition = "numeric(6,2)")
+    val weightKg: BigDecimal? = null,
+
+    @Column(name = "rir")
+    val rir: Int? = null,
+
+    @Column(name = "duration_sec")
+    val durationSec: Int? = null,
+
+    @Column(name = "notes")
+    val notes: String? = null
 )
