@@ -7,26 +7,32 @@ import java.util.*
 
 @Entity
 @Table(name = "workouts")
-class Workout(
+data class Workout(
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    var id: UUID? = null,
+    @GeneratedValue
+    @Column(columnDefinition = "uuid")
+    val id: UUID? = null,
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    var user: User,
+    @JoinColumn(name = "user_id", nullable = false, columnDefinition = "uuid")
+    val user: User,
 
     @Column(nullable = false)
-    var title: String,
+    val title: String,
 
     @Column(name = "start_time", nullable = false)
-    var startTime: Instant,
+    val startTime: Instant,
 
     @Column(name = "end_time")
-    var endTime: Instant? = null,
+    val endTime: Instant? = null,
 
-    var notes: String? = null,
+    @Column(name = "notes")
+    val notes: String? = null,
 
-    @OneToMany(mappedBy = "workout", cascade = [CascadeType.ALL], orphanRemoval = true)
-    var exercises: MutableList<WorkoutExercise> = mutableListOf()
+    @OneToMany(
+        mappedBy = "workout",
+        cascade = [CascadeType.ALL],
+        orphanRemoval = true
+    )
+    val exercises: MutableList<WorkoutExercise> = mutableListOf()
 )

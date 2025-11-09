@@ -3,16 +3,20 @@ package `is`.hi.hbv501g.repx.workouts.domain
 import jakarta.persistence.*
 import java.math.BigDecimal
 import java.util.UUID
+import org.hibernate.annotations.UuidGenerator
 
 @Entity
 @Table(name = "sets")
-data class SetEntity(
+data class LiftSet(
     @Id
+    @GeneratedValue
+    @UuidGenerator
     @Column(columnDefinition = "uuid")
     val id: UUID? = null,
 
-    @Column(name = "workout_exercise_id", nullable = false, columnDefinition = "uuid")
-    val workoutExerciseId: UUID,
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "workout_exercise_id", nullable = false, columnDefinition = "uuid")
+    val workoutExercise: WorkoutExercise,
 
     @Column(name = "set_index", nullable = false)
     val setIndex: Int = 1,

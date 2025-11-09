@@ -14,6 +14,8 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.UUID
 
 @Service
@@ -45,11 +47,14 @@ class WorkoutService(
             )
 
             exReq.sets.forEach { sReq ->
+                val weightBd: BigDecimal? = sReq.weightKg
+                    ?.let { BigDecimal.valueOf(it).setScale(2, RoundingMode.HALF_UP) }
+
                 val set = LiftSet(
                     workoutExercise = wex,
                     setIndex = sReq.setIndex,
                     reps = sReq.reps,
-                    weightKg = sReq.weightKg,
+                    weightKg = weightBd,
                     rir = sReq.rir,
                     durationSec = sReq.durationSec,
                     notes = sReq.notes
@@ -70,17 +75,15 @@ class WorkoutService(
     @Transactional(readOnly = true)
     fun list(pageable: Pageable): Page<WorkoutDTO> =
         workoutRepo.findAll(pageable).map { it.toDTO() }
-    
+
     @Transactional(readOnly = true)
     fun listByUser(userId: UUID, pageable: Pageable): Page<WorkoutDTO> =
-        workoutRepo.findByUserId(userId, pageable).map { it.toDTO() }
-
+        workoutRepo.findByUser_Id(userId, pageable).map { it.toDTO() }
 
     @Transactional
     fun delete(id: UUID): Boolean =
         if (workoutRepo.existsById(id)) { workoutRepo.deleteById(id); true } else false
 }
-
 
 private fun `is`.hi.hbv501g.repx.workouts.domain.Workout.toDTO() = WorkoutDTO(
     id = this.id!!,
@@ -108,7 +111,7 @@ private fun `is`.hi.hbv501g.repx.workouts.domain.LiftSet.toDTO() = SetDTO(
     id = this.id!!,
     setIndex = this.setIndex,
     reps = this.reps,
-    weightKg = this.weightKg,
+    weightKg = this.weightKg?.toDouble(),
     rir = this.rir,
     durationSec = this.durationSec,
     notes = this.notes
