@@ -4,32 +4,38 @@ import `is`.hi.hbv501g.repx.users.domain.User
 import `is`.hi.hbv501g.repx.users.dto.CreateUserRequest
 import `is`.hi.hbv501g.repx.users.dto.UserDTO
 import `is`.hi.hbv501g.repx.users.repo.UserRepository
-
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
-import java.util.*
+import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
+import java.util.UUID
 
 @Service
 class UserService(private val repo: UserRepository) {
     private val encoder = BCryptPasswordEncoder()
 
+    @Transactional
     fun createUser(req: CreateUserRequest): UserDTO {
-        val users = User(
+        val user = User(
             email = req.email.trim().lowercase(),
             passwordHash = encoder.encode(req.password),
-            displayName = req.displayName
+            displayName = req.displayName,
+            createdAt = Instant.now()
         )
-        return repo.save(users).toDTO()
+        return repo.save(user).toDTO()
     }
 
-    fun deleteUser(id: UUID): Boolean = repo.findById(id).map {
-        repo.delete(it); true
-    }.orElse(false)
+    @Transactional
+    fun deleteUser(id: UUID): Boolean =
+        repo.findById(id).map { repo.delete(it); true }.orElse(false)
 
-    fun getUser(id: UUID): UserDTO? = repo.findById(id).orElse(null)?.toDTO()
+    @Transactional(readOnly = true)
+    fun getUser(id: UUID): UserDTO? =
+        repo.findById(id).orElse(null)?.toDTO()
 
+    @Transactional(readOnly = true)
     fun listUsers(pageable: Pageable): Page<UserDTO> =
         repo.findAll(pageable).map { it.toDTO() }
 }

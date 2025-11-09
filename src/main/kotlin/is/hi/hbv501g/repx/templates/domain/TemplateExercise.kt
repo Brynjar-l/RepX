@@ -1,6 +1,8 @@
 package `is`.hi.hbv501g.repx.templates.domain
 
+import `is`.hi.hbv501g.repx.exercises.domain.Exercise
 import jakarta.persistence.*
+import org.hibernate.annotations.UuidGenerator
 import java.math.BigDecimal
 import java.util.UUID
 
@@ -8,21 +10,25 @@ import java.util.UUID
 @Table(name = "template_exercises")
 data class TemplateExercise(
     @Id
+    @GeneratedValue
+    @UuidGenerator
     @Column(columnDefinition = "uuid")
     val id: UUID? = null,
 
-    @Column(name = "template_id", nullable = false, columnDefinition = "uuid")
-    val templateId: UUID,
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "template_id", nullable = false, columnDefinition = "uuid")
+    val template: Template,
 
-    @Column(name = "exercise_id", nullable = false, columnDefinition = "uuid")
-    val exerciseId: UUID,
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "exercise_id", nullable = false, columnDefinition = "uuid")
+    val exercise: Exercise,
 
     @Column(name = "order_index", nullable = false)
-    val orderIndex: Int = 0,
+    var orderIndex: Int = 0,
 
     @Column(name = "default_reps")
-    val defaultReps: Int? = null,
+    var defaultReps: Int? = null,
 
     @Column(name = "default_weight_kg", columnDefinition = "numeric(6,2)")
-    val defaultWeightKg: BigDecimal? = null
+    var defaultWeightKg: BigDecimal? = null
 )

@@ -2,9 +2,8 @@ package `is`.hi.hbv501g.repx.users.repo
 
 import `is`.hi.hbv501g.repx.users.domain.User
 import org.springframework.data.jpa.repository.JpaRepository
-import java.util.*
+import java.util.UUID
 
 interface UserRepository : JpaRepository<User, UUID> {
-    /** Checks if email exists. case-insensitive. */
     fun existsByEmailIgnoreCase(email: String): Boolean
 }

@@ -2,14 +2,17 @@ package `is`.hi.hbv501g.repx.users.domain
 
 import jakarta.persistence.*
 import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.annotations.UuidGenerator
 import org.hibernate.type.SqlTypes
-import java.time.OffsetDateTime
+import java.time.Instant
 import java.util.UUID
 
 @Entity
 @Table(name = "users")
 data class User(
     @Id
+    @GeneratedValue
+    @UuidGenerator
     @Column(columnDefinition = "uuid")
     val id: UUID? = null,
 
@@ -24,5 +27,5 @@ data class User(
     val displayName: String,
 
     @Column(name = "created_at", nullable = false)
-    val createdAt: OffsetDateTime? = null
+    val createdAt: Instant = Instant.now()
 )

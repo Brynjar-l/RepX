@@ -57,7 +57,6 @@ class ExerciseService(
         return repo.save(entity).toDTO()
     }
 
-
     @Transactional
     fun delete(id: UUID): Boolean =
         if (repo.existsById(id)) { repo.deleteById(id); true } else false

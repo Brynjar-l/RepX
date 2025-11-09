@@ -3,14 +3,13 @@ package `is`.hi.hbv501g.repx.users.web
 import `is`.hi.hbv501g.repx.users.dto.CreateUserRequest
 import `is`.hi.hbv501g.repx.users.dto.UserDTO
 import `is`.hi.hbv501g.repx.users.service.UserService
-
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.util.*
+import java.util.UUID
 
 @RestController
 @RequestMapping("/users")
@@ -36,9 +35,10 @@ class UserController(private val service: UserService) {
         @RequestParam(defaultValue = "createdAt,desc") sort: String
     ): Page<UserDTO> {
         val (prop, dir) = sort.split(",", limit = 2).let { it[0] to (it.getOrNull(1) ?: "asc") }
-        val pageable: Pageable = PageRequest.of(page, size, Sort.by(
-            if (dir.equals("desc", true)) Sort.Order.desc(prop) else Sort.Order.asc(prop)
-        ))
+        val pageable: Pageable = PageRequest.of(
+            page, size,
+            if (dir.equals("desc", true)) Sort.by(Sort.Order.desc(prop)) else Sort.by(Sort.Order.asc(prop))
+        )
         return service.listUsers(pageable)
     }
 }

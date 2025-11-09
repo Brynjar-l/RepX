@@ -1,0 +1,48 @@
+package `is`.hi.hbv501g.repx.templates.web
+
+import `is`.hi.hbv501g.repx.templates.dto.*
+import `is`.hi.hbv501g.repx.templates.service.TemplateService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
+import java.util.*
+
+@RestController
+@RequestMapping("/templates")
+class TemplateController(
+    private val service: TemplateService
+) {
+    @PostMapping
+    fun create(@RequestBody req: CreateTemplateRequest): ResponseEntity<TemplateDTO> =
+        ResponseEntity.ok(service.create(req))
+
+    @GetMapping("/{id}")
+    fun get(@PathVariable id: UUID): ResponseEntity<TemplateDTO> =
+        service.get(id)?.let { ResponseEntity.ok(it) } ?: ResponseEntity.notFound().build()
+
+    @GetMapping
+    fun list(
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "20") size: Int,
+        @RequestParam(defaultValue = "name,asc") sort: String,
+        @RequestParam(required = false) userId: UUID?
+    ): Page<TemplateDTO> {
+        val (prop, dir) = sort.split(",", limit = 2).let { it[0] to (it.getOrNull(1) ?: "asc") }
+        val pageable: Pageable = PageRequest.of(
+            page, size,
+            if (dir.equals("desc", true)) Sort.by(Sort.Order.desc(prop)) else Sort.by(Sort.Order.asc(prop))
+        )
+        return if (userId != null) service.listByUser(userId, pageable) else service.list(pageable)
+    }
+
+    @PutMapping("/{id}")
+    fun update(@PathVariable id: UUID, @RequestBody req: UpdateTemplateRequest): ResponseEntity<TemplateDTO> =
+        ResponseEntity.ok(service.update(id, req))
+
+    @DeleteMapping("/{id}")
+    fun delete(@PathVariable id: UUID): ResponseEntity<Void> =
+        if (service.delete(id)) ResponseEntity.noContent().build() else ResponseEntity.notFound().build()
+}

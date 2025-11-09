@@ -1,14 +1,17 @@
 package `is`.hi.hbv501g.repx.exercises.domain
 
 import jakarta.persistence.*
+import org.hibernate.annotations.UuidGenerator
 import java.util.UUID
 
 @Entity
 @Table(name = "exercises")
-class Exercise(
+data class Exercise(
     @Id
+    @GeneratedValue
+    @UuidGenerator
     @Column(columnDefinition = "uuid")
-    var id: UUID? = null,
+    val id: UUID? = null,
 
     @Column(nullable = false, unique = true)
     var name: String,
@@ -16,13 +19,12 @@ class Exercise(
     @Column(name = "primary_muscle")
     var primaryMuscle: String? = null,
 
+    @Column
     var equipment: String? = null,
 
+    @Column
     var difficulty: String? = null,
 
     @Column(name = "is_public", nullable = false)
     var isPublic: Boolean = true
-) {
-    @PrePersist
-    fun ensureId() { if (id == null) id = UUID.randomUUID() }
-}
+)
