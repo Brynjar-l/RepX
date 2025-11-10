@@ -17,7 +17,7 @@ data class User(
     val id: UUID? = null,
 
     @Column(name = "email", nullable = false, unique = true, columnDefinition = "citext")
-    @JdbcTypeCode(SqlTypes.OTHER)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     val email: String,
 
     @Column(name = "password_hash", nullable = false)
