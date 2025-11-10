@@ -4,13 +4,13 @@ import `is`.hi.hbv501g.repx.users.domain.User
 import `is`.hi.hbv501g.repx.users.dto.CreateUserRequest
 import `is`.hi.hbv501g.repx.users.dto.UserDTO
 import `is`.hi.hbv501g.repx.users.repo.UserRepository
+
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import java.time.Instant
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
 import java.util.*
 
 @Service
@@ -19,16 +19,16 @@ class UserService(private val repo: UserRepository) {
 
     fun createUser(req: CreateUserRequest): UserDTO {
         val emailNorm = req.email.trim().lowercase()
+        if (repo.existsByEmail(emailNorm)) {
+            throw IllegalArgumentException("email_taken")
+        }
 
-        if (repo.existsByEmail(emailNorm)) throw IllegalArgumentException("email_taken")
-
-        val user = User(
+        val entity = User(
             email = emailNorm,
             passwordHash = encoder.encode(req.password),
-            displayName = req.displayName,
-            createdAt = Instant.now()
+            displayName = req.displayName
         )
-        return repo.save(user).toDTO()
+        return repo.save(entity).toDTO()
     }
 
     fun deleteUser(id: UUID): Boolean =
@@ -44,5 +44,5 @@ private fun User.toDTO() = UserDTO(
     id = this.id!!,
     email = this.email,
     displayName = this.displayName,
-    createdAt = this.createdAt.atOffset(ZoneOffset.UTC)
+    createdAt = this.createdAt
 )

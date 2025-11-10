@@ -1,125 +1,126 @@
-BEGIN;
+-- =====================================================
+--  RepX full schema reset
+--  SAFE: Drops all public tables and recreates clean schema
+-- =====================================================
 
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-CREATE EXTENSION IF NOT EXISTS citext;
+-- DROP EVERYTHING (tables, sequences, views)
+DO $$
+DECLARE
+    r RECORD;
+BEGIN
+    FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP
+        EXECUTE 'DROP TABLE IF EXISTS public.' || quote_ident(r.tablename) || ' CASCADE';
+    END LOOP;
+END$$;
 
+-- =====================================================
+-- EXTENSIONS
+-- =====================================================
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "citext";
 
-CREATE TABLE IF NOT EXISTS users (
-  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  email         VARCHAR(255) NOT NULL UNIQUE,
-  password_hash TEXT   NOT NULL,
-  display_name  TEXT   NOT NULL,
-  created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
+-- =====================================================
+-- USERS
+-- =====================================================
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    email CITEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    display_name TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS exercises (
-  id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name           TEXT NOT NULL UNIQUE,
-  primary_muscle TEXT,
-  equipment      TEXT,
-  difficulty     TEXT,
-  is_public      BOOLEAN NOT NULL DEFAULT TRUE
+-- =====================================================
+-- EXERCISES
+-- =====================================================
+CREATE TABLE exercises (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name TEXT NOT NULL UNIQUE,
+    primary_muscle TEXT,
+    equipment TEXT,
+    difficulty TEXT,
+    is_public BOOLEAN NOT NULL DEFAULT TRUE
 );
 
-CREATE TABLE IF NOT EXISTS workouts (
-  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id    UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
-  title      TEXT NOT NULL,
-  start_time TIMESTAMPTZ NOT NULL,
-  end_time   TIMESTAMPTZ,
-  notes      TEXT
+-- =====================================================
+-- WORKOUTS
+-- =====================================================
+CREATE TABLE workouts (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    start_time TIMESTAMPTZ NOT NULL,
+    end_time TIMESTAMPTZ,
+    notes TEXT
 );
 
-CREATE INDEX IF NOT EXISTS idx_workouts_user_time ON workouts(user_id, start_time DESC);
-
-CREATE TABLE IF NOT EXISTS workout_exercises (
-  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  workout_id  UUID NOT NULL REFERENCES workouts(id)  ON UPDATE CASCADE ON DELETE CASCADE,
-  exercise_id UUID NOT NULL REFERENCES exercises(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-  order_index INT  NOT NULL DEFAULT 0
+-- =====================================================
+-- WORKOUT_EXERCISES
+-- =====================================================
+CREATE TABLE workout_exercises (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    workout_id UUID NOT NULL REFERENCES workouts(id) ON DELETE CASCADE,
+    exercise_id UUID NOT NULL REFERENCES exercises(id),
+    order_index INT NOT NULL DEFAULT 0
 );
 
-CREATE INDEX IF NOT EXISTS idx_wex_workout  ON workout_exercises(workout_id, order_index);
-CREATE INDEX IF NOT EXISTS idx_wex_exercise ON workout_exercises(exercise_id);
-
-CREATE TABLE IF NOT EXISTS sets (
-  id                   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  workout_exercise_id  UUID NOT NULL REFERENCES workout_exercises(id) ON UPDATE CASCADE ON DELETE CASCADE,
-  set_index            INT  NOT NULL DEFAULT 1 CHECK (set_index >= 1),
-  reps                 INT  CHECK (reps IS NULL OR reps >= 0),
-  weight_kg            NUMERIC(6,2) CHECK (weight_kg IS NULL OR weight_kg >= 0),
-  rir                  INT  CHECK (rir IS NULL OR (rir >= 0 AND rir <= 10)),
-  duration_sec         INT  CHECK (duration_sec IS NULL OR duration_sec >= 0),
-  notes                TEXT
+-- =====================================================
+-- LIFT_SETS
+-- =====================================================
+CREATE TABLE sets (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    workout_exercise_id UUID NOT NULL REFERENCES workout_exercises(id) ON DELETE CASCADE,
+    set_index INT NOT NULL,
+    reps INT,
+    weight_kg NUMERIC(6,2),
+    rir INT,
+    duration_sec INT,
+    notes TEXT
 );
 
-CREATE INDEX IF NOT EXISTS idx_sets_wex ON sets(workout_exercise_id, set_index);
-
-CREATE TABLE IF NOT EXISTS templates (
-  id        UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id   UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
-  name      TEXT NOT NULL,
-  notes     TEXT,
-  CONSTRAINT uq_template_name_per_user UNIQUE (user_id, name)
+-- =====================================================
+-- TEMPLATES
+-- =====================================================
+CREATE TABLE templates (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    notes TEXT,
+    CONSTRAINT uq_template_name_per_user UNIQUE (user_id, name)
 );
 
-CREATE TABLE IF NOT EXISTS template_exercises (
-  id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  template_id       UUID NOT NULL REFERENCES templates(id) ON UPDATE CASCADE ON DELETE CASCADE,
-  exercise_id       UUID NOT NULL REFERENCES exercises(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-  order_index       INT NOT NULL DEFAULT 0,
-  default_reps      INT CHECK (default_reps IS NULL OR default_reps >= 0),
-  default_weight_kg NUMERIC(6,2) CHECK (default_weight_kg IS NULL OR default_weight_kg >= 0)
+-- =====================================================
+-- TEMPLATE_EXERCISES
+-- =====================================================
+CREATE TABLE template_exercises (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    template_id UUID NOT NULL REFERENCES templates(id) ON DELETE CASCADE,
+    exercise_id UUID NOT NULL REFERENCES exercises(id),
+    order_index INT NOT NULL DEFAULT 0,
+    default_reps INT,
+    default_weight_kg NUMERIC(6,2)
 );
 
-CREATE INDEX IF NOT EXISTS idx_tex_template ON template_exercises(template_id, order_index);
-
-CREATE TABLE IF NOT EXISTS favorite_exercises (
-  user_id     UUID NOT NULL REFERENCES users(id)     ON UPDATE CASCADE ON DELETE CASCADE,
-  exercise_id UUID NOT NULL REFERENCES exercises(id) ON UPDATE CASCADE ON DELETE CASCADE,
-  created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
-  PRIMARY KEY (user_id, exercise_id)
+-- =====================================================
+-- PROGRESS_PHOTOS (optional future table)
+-- =====================================================
+CREATE TABLE progress_photos (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    media_key TEXT NOT NULL,
+    taken_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS body_metrics (
-  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id      UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
-  recorded_at  TIMESTAMPTZ NOT NULL,
-  weight_kg    NUMERIC(6,2),
-  body_fat_pct NUMERIC(5,2) CHECK (body_fat_pct IS NULL OR (body_fat_pct >= 0 AND body_fat_pct <= 100)),
-  chest_cm     NUMERIC(6,2),
-  waist_cm     NUMERIC(6,2),
-  hips_cm      NUMERIC(6,2)
-);
+-- =====================================================
+-- INDEXES
+-- =====================================================
+CREATE INDEX idx_workouts_user_id ON workouts(user_id);
+CREATE INDEX idx_workout_exercises_workout_id ON workout_exercises(workout_id);
+CREATE INDEX idx_sets_workout_exercise_id ON sets(workout_exercise_id);
+CREATE INDEX idx_templates_user_id ON templates(user_id);
+CREATE INDEX idx_template_exercises_template_id ON template_exercises(template_id);
 
-CREATE INDEX IF NOT EXISTS idx_body_metrics_user_time ON body_metrics(user_id, recorded_at DESC);
-
-CREATE TABLE IF NOT EXISTS progress_photos (
-  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id    UUID NOT NULL REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
-  taken_at   TIMESTAMPTZ NOT NULL,
-  caption    TEXT,
-  media_key  TEXT NOT NULL,
-  mime_type  TEXT NOT NULL,
-  size_bytes BIGINT CHECK (size_bytes IS NULL OR size_bytes >= 0)
-);
-
-CREATE INDEX IF NOT EXISTS idx_photos_user_time ON progress_photos(user_id, taken_at DESC);
-
-DROP VIEW IF EXISTS v_set_volume;
-CREATE VIEW v_set_volume AS
-SELECT
-  s.workout_exercise_id,
-  SUM(COALESCE(s.reps,0) * COALESCE(s.weight_kg,0))::NUMERIC(12,2) AS total_volume
-FROM sets s
-GROUP BY s.workout_exercise_id;
-
-DROP VIEW IF EXISTS v_recent_workouts;
-CREATE VIEW v_recent_workouts AS
-SELECT w.*
-FROM workouts w
-ORDER BY w.start_time DESC;
-
-COMMIT;
-
-END;
+-- =====================================================
+-- DONE
+-- =====================================================
+COMMENT ON DATABASE current_database() IS 'RepX clean schema installed successfully.';
