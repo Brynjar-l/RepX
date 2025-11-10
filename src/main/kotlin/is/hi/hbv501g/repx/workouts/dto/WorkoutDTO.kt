@@ -1,9 +1,12 @@
 package `is`.hi.hbv501g.repx.workouts.dto
 
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
 import java.time.Instant
 import java.util.*
 
 data class CreateSetRequest(
+    @field:NotNull
     val setIndex: Int,
     val reps: Int? = null,
     val weightKg: Double? = null,
@@ -13,14 +16,18 @@ data class CreateSetRequest(
 )
 
 data class CreateWorkoutExerciseRequest(
+    @field:NotNull
     val exerciseId: UUID,
     val orderIndex: Int = 0,
     val sets: List<CreateSetRequest> = emptyList()
 )
 
 data class CreateWorkoutRequest(
+    @field:NotNull
     val userId: UUID,
+    @field:NotBlank
     val title: String,
+    @field:NotNull
     val startTime: Instant,
     val endTime: Instant? = null,
     val notes: String? = null,

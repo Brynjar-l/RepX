@@ -3,13 +3,14 @@ package `is`.hi.hbv501g.repx.workouts.web
 import `is`.hi.hbv501g.repx.workouts.dto.CreateWorkoutRequest
 import `is`.hi.hbv501g.repx.workouts.dto.WorkoutDTO
 import `is`.hi.hbv501g.repx.workouts.service.WorkoutService
+import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.util.UUID
+import java.util.*
 
 @RestController
 @RequestMapping("/workouts")
@@ -17,7 +18,7 @@ class WorkoutController(
     private val service: WorkoutService
 ) {
     @PostMapping
-    fun create(@RequestBody req: CreateWorkoutRequest): ResponseEntity<WorkoutDTO> =
+    fun create(@RequestBody @Valid req: CreateWorkoutRequest): ResponseEntity<WorkoutDTO> =
         ResponseEntity.ok(service.create(req))
 
     @GetMapping("/{id}")

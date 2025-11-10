@@ -1,9 +1,9 @@
 package `is`.hi.hbv501g.repx.workouts.domain
 
 import jakarta.persistence.*
+import org.hibernate.annotations.UuidGenerator
 import java.math.BigDecimal
 import java.util.UUID
-import org.hibernate.annotations.UuidGenerator
 
 @Entity
 @Table(name = "sets")

@@ -2,6 +2,7 @@ package `is`.hi.hbv501g.repx.workouts.domain
 
 import `is`.hi.hbv501g.repx.users.domain.User
 import jakarta.persistence.*
+import org.hibernate.annotations.UuidGenerator
 import java.time.Instant
 import java.util.*
 
@@ -10,6 +11,7 @@ import java.util.*
 data class Workout(
     @Id
     @GeneratedValue
+    @UuidGenerator
     @Column(columnDefinition = "uuid")
     val id: UUID? = null,
 
@@ -34,5 +36,6 @@ data class Workout(
         cascade = [CascadeType.ALL],
         orphanRemoval = true
     )
+    @OrderBy("orderIndex ASC")
     val exercises: MutableList<WorkoutExercise> = mutableListOf()
 )

@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.util.UUID
+import java.util.*
 
 @Service
 class WorkoutService(
@@ -92,9 +92,7 @@ private fun `is`.hi.hbv501g.repx.workouts.domain.Workout.toDTO() = WorkoutDTO(
     startTime = this.startTime,
     endTime = this.endTime,
     notes = this.notes,
-    exercises = this.exercises
-        .sortedBy { it.orderIndex }
-        .map { it.toDTO() }
+    exercises = this.exercises.map { it.toDTO() }
 )
 
 private fun `is`.hi.hbv501g.repx.workouts.domain.WorkoutExercise.toDTO() = WorkoutExerciseDTO(
@@ -102,9 +100,7 @@ private fun `is`.hi.hbv501g.repx.workouts.domain.WorkoutExercise.toDTO() = Worko
     exerciseId = this.exercise.id!!,
     exerciseName = this.exercise.name,
     orderIndex = this.orderIndex,
-    sets = this.sets
-        .sortedBy { it.setIndex }
-        .map { it.toDTO() }
+    sets = this.sets.map { it.toDTO() }
 )
 
 private fun `is`.hi.hbv501g.repx.workouts.domain.LiftSet.toDTO() = SetDTO(
