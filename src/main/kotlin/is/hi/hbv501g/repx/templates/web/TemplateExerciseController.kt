@@ -1,24 +1,19 @@
 package `is`.hi.hbv501g.repx.templates.web
 
-import `is`.hi.hbv501g.repx.templates.dto.CreateTemplateExerciseRequest
-import `is`.hi.hbv501g.repx.templates.dto.TemplateExerciseDTO
-import `is`.hi.hbv501g.repx.templates.dto.UpdateTemplateExerciseRequest
-import `is`.hi.hbv501g.repx.templates.dto.ReorderTemplateExercisesRequest
+import `is`.hi.hbv501g.repx.templates.dto.*
 import `is`.hi.hbv501g.repx.templates.service.TemplateService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.util.UUID
+import java.util.*
 
 @RestController
 @RequestMapping("/templates/{templateId}/exercises")
 class TemplateExerciseController(
     private val service: TemplateService
 ) {
-
     @GetMapping
-    fun list(
-        @PathVariable templateId: UUID
-    ): List<TemplateExerciseDTO> = service.listExercises(templateId)
+    fun list(@PathVariable templateId: UUID): List<TemplateExerciseDTO> =
+        service.listExercises(templateId)
 
     @PostMapping
     fun add(
@@ -47,5 +42,6 @@ class TemplateExerciseController(
     fun reorder(
         @PathVariable templateId: UUID,
         @RequestBody req: ReorderTemplateExercisesRequest
-    ): List<TemplateExerciseDTO> = service.reorderExercises(templateId, req)
+    ): List<TemplateExerciseDTO> =
+        service.reorderExercises(templateId, req)
 }

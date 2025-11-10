@@ -1,7 +1,6 @@
 package `is`.hi.hbv501g.repx.templates.domain
 
 import `is`.hi.hbv501g.repx.users.domain.User
-import `is`.hi.hbv501g.repx.templates.domain.TemplateExercise
 import jakarta.persistence.*
 import org.hibernate.annotations.UuidGenerator
 import java.util.UUID

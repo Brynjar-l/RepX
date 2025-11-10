@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.*
 
 @Service
@@ -30,11 +31,7 @@ class TemplateService(
             throw IllegalArgumentException("template_name_taken")
         }
 
-        val tpl = Template(
-            user = user,
-            name = req.name,
-            notes = req.notes
-        )
+        val tpl = Template(user = user, name = req.name, notes = req.notes)
 
         req.exercises.forEach { line ->
             val ex = exerciseRepo.findById(line.exerciseId)
@@ -90,9 +87,7 @@ class TemplateService(
     @Transactional(readOnly = true)
     fun listExercises(templateId: UUID): List<TemplateExerciseDTO> {
         ensureTemplateExists(templateId)
-        return templateExerciseRepo
-            .findAllByTemplateIdOrderByOrderIndexAsc(templateId)
-            .map { it.toDTO() }
+        return templateExerciseRepo.findAllByTemplateIdOrderByOrderIndexAsc(templateId).map { it.toDTO() }
     }
 
     @Transactional
@@ -102,8 +97,7 @@ class TemplateService(
 
         val existing = templateExerciseRepo.findAllByTemplateIdOrderByOrderIndexAsc(templateId)
         val nextOrder = (existing.maxOfOrNull { it.orderIndex } ?: -1) + 1
-
-        val desiredOrder = req.orderIndex.coerceAtLeast(0)
+        val desiredOrder = req.orderIndex.coerceIn(0, nextOrder)
 
         val line = TemplateExercise(
             template = tpl,
@@ -194,9 +188,7 @@ private fun `is`.hi.hbv501g.repx.templates.domain.Template.toDTO(): TemplateDTO 
         userId = this.user.id!!,
         name = this.name,
         notes = this.notes,
-        exercises = this.exercises
-            .sortedBy { it.orderIndex }
-            .map { it.toDTO() }
+        exercises = this.exercises.sortedBy { it.orderIndex }.map { it.toDTO() }
     )
 
 private fun `is`.hi.hbv501g.repx.templates.domain.TemplateExercise.toDTO(): TemplateExerciseDTO =
@@ -210,4 +202,4 @@ private fun `is`.hi.hbv501g.repx.templates.domain.TemplateExercise.toDTO(): Temp
     )
 
 private fun Double.bd2(): BigDecimal =
-    BigDecimal.valueOf(this).setScale(2)
+    BigDecimal.valueOf(this).setScale(2, RoundingMode.HALF_UP)
