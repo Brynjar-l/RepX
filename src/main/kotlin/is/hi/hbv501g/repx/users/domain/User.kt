@@ -26,11 +26,4 @@ data class User(
 
     @Column(name = "created_at", nullable = false, updatable = false)
     var createdAt: OffsetDateTime = OffsetDateTime.now(ZoneOffset.UTC)
-) {
-    @PrePersist
-    fun onCreate() {
-        if (createdAt == null) { 
-            createdAt = OffsetDateTime.now(ZoneOffset.UTC)
-        }
-    }
-}
+)
