@@ -20,6 +20,7 @@ class UserService(private val repo: UserRepository) {
     fun createUser(req: CreateUserRequest): UserDTO {
         val emailNorm = req.email.trim().lowercase()
         if (repo.existsByEmail(emailNorm)) {
+            // 400 bad_request (fer í GlobalExceptionHandler)
             throw IllegalArgumentException("email_taken")
         }
 
@@ -27,6 +28,7 @@ class UserService(private val repo: UserRepository) {
             email = emailNorm,
             passwordHash = encoder.encode(req.password),
             displayName = req.displayName
+            // createdAt sett sjálfkrafa í entity (sjá @PrePersist)
         )
         return repo.save(entity).toDTO()
     }
@@ -44,5 +46,5 @@ private fun User.toDTO() = UserDTO(
     id = this.id!!,
     email = this.email,
     displayName = this.displayName,
-    createdAt = this.createdAt
+    createdAt = this.createdAt // OffsetDateTime -> Instant
 )
