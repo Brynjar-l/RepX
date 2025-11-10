@@ -24,7 +24,10 @@ class UserService(private val repo: UserRepository) {
             passwordHash = encoder.encode(req.password),
             displayName = req.displayName.trim()
         )
-        return repo.save(user).toDTO()
+        val saved = repo.save(user)
+        val reloaded = repo.findById(saved.id!!).orElse(saved)
+
+        return reloaded.toDTO()
     }
 
     fun deleteUser(id: UUID): Boolean =
