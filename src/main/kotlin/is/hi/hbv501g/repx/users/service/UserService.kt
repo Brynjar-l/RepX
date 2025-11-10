@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import java.util.*
+import hi.hbv501g.repx.users.dto.UpdateUserRequest
 
 @Service
 class UserService(private val repo: UserRepository) {
@@ -29,6 +30,28 @@ class UserService(private val repo: UserRepository) {
 
         return reloaded.toDTO()
     }
+
+    fun updateUser(id: UUID, req: UpdateUserRequest): UserDTO {
+    val user = repo.findById(id).orElseThrow { IllegalArgumentException("user_not_found") }
+
+    val newEmail = req.email?.trim()?.lowercase()
+    val newName = req.displayName?.trim()
+
+    if (newEmail != null && newEmail != user.email) {
+        if (repo.existsByEmail(newEmail)) {
+            throw IllegalArgumentException("email_taken")
+        }
+        user.copy(email = newEmail)
+    }
+
+    val updated = user.copy(
+        email = newEmail ?: user.email,
+        displayName = newName ?: user.displayName
+    )
+
+    val saved = repo.save(updated)
+    return saved.toDTO()
+}
 
     fun deleteUser(id: UUID): Boolean =
         repo.findById(id).map { repo.delete(it); true }.orElse(false)
