@@ -4,12 +4,12 @@ import `is`.hi.hbv501g.repx.users.domain.User
 import `is`.hi.hbv501g.repx.users.dto.CreateUserRequest
 import `is`.hi.hbv501g.repx.users.dto.UserDTO
 import `is`.hi.hbv501g.repx.users.repo.UserRepository
+import `is`.hi.hbv501g.repx.users.dto.UpdateUserRequest
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import java.util.*
-import hi.hbv501g.repx.users.dto.UpdateUserRequest
 
 @Service
 class UserService(private val repo: UserRepository) {

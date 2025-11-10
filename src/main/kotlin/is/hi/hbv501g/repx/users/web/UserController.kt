@@ -3,6 +3,7 @@ package `is`.hi.hbv501g.repx.users.web
 import `is`.hi.hbv501g.repx.users.dto.CreateUserRequest
 import `is`.hi.hbv501g.repx.users.dto.UserDTO
 import `is`.hi.hbv501g.repx.users.service.UserService
+import `is`.hi.hbv501g.repx.users.dto.UpdateUserRequest
 import java.util.UUID
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -10,7 +11,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import hi.hbv501g.repx.users.dto.UpdateUserRequest
 
 @RestController
 @RequestMapping("/users")
