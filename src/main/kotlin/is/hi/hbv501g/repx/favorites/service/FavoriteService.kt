@@ -26,16 +26,15 @@ class FavoriteService(
             .orElseThrow { NoSuchElementException("exercise_not_found") }
 
         val key = FavoriteId(user.id!!, exercise.id!!)
+
         val existing = repo.findById(key)
-        if (existing.isPresent) return existing.get().toDTO()
+        if (existing.isPresent) {
+            return existing.get().toDTO()
+        }
 
-        val entity = FavoriteExercise(
-            id = key,
-            user = user,
-            exercise = exercise
-        )
+        repo.save(FavoriteExercise(id = key, user = user, exercise = exercise))
 
-        return repo.save(entity).toDTO()
+        return repo.findById(key).orElseThrow().toDTO()
     }
 
     @Transactional(readOnly = true)
@@ -43,7 +42,7 @@ class FavoriteService(
         if (!userRepo.existsById(userId))
             throw NoSuchElementException("user_not_found")
 
-        return repo.findByIdUserIdOrderByCreatedAtDesc(userId)
+        return repo.findAllByUserIdOrderByCreatedAtDesc(userId)
             .map { it.toDTO() }
     }
 

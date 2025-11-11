@@ -10,9 +10,9 @@ import java.util.*
 @Embeddable
 data class FavoriteId(
     @Column(name = "user_id", columnDefinition = "uuid")
-    val userId: UUID = UUID(0,0),
+    val userId: UUID = UUID(0, 0),
     @Column(name = "exercise_id", columnDefinition = "uuid")
-    val exerciseId: UUID = UUID(0,0)
+    val exerciseId: UUID = UUID(0, 0)
 ) : Serializable
 
 @Entity
@@ -21,14 +21,14 @@ data class FavoriteExercise(
     @EmbeddedId
     val id: FavoriteId,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @MapsId("userId")
-    @JoinColumn(name = "user_id", columnDefinition = "uuid")
+    @JoinColumn(name = "user_id", columnDefinition = "uuid", nullable = false)
     val user: User,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @MapsId("exerciseId")
-    @JoinColumn(name = "exercise_id", columnDefinition = "uuid")
+    @JoinColumn(name = "exercise_id", columnDefinition = "uuid", nullable = false)
     val exercise: Exercise,
 
     @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
