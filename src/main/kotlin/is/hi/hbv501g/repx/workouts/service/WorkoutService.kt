@@ -47,21 +47,17 @@ class WorkoutService(
             )
 
             exReq.sets.forEach { sReq ->
-                val weightBd: BigDecimal? = sReq.weightKg
-                    ?.let { BigDecimal.valueOf(it).setScale(2, RoundingMode.HALF_UP) }
-
                 val set = LiftSet(
                     workoutExercise = wex,
                     setIndex = sReq.setIndex,
                     reps = sReq.reps,
-                    weightKg = weightBd,
+                    weightKg = sReq.weightKg?.let { BigDecimal.valueOf(it).setScale(2, RoundingMode.HALF_UP) },
                     rir = sReq.rir,
                     durationSec = sReq.durationSec,
                     notes = sReq.notes
                 )
                 wex.sets.add(set)
             }
-
             workout.exercises.add(wex)
         }
 
@@ -70,7 +66,7 @@ class WorkoutService(
 
     @Transactional(readOnly = true)
     fun get(id: UUID): WorkoutDTO? =
-        workoutRepo.findWithGraphById(id).orElse(null)?.toDTO()
+        workoutRepo.fetchWithExercises(id).orElse(null)?.toDTO() 
 
     @Transactional(readOnly = true)
     fun list(pageable: Pageable): Page<WorkoutDTO> =
@@ -92,9 +88,7 @@ private fun `is`.hi.hbv501g.repx.workouts.domain.Workout.toDTO() = WorkoutDTO(
     startTime = this.startTime,
     endTime = this.endTime,
     notes = this.notes,
-    exercises = this.exercises
-        .sortedBy { it.orderIndex }
-        .map { it.toDTO() }
+    exercises = this.exercises.map { it.toDTO() }
 )
 
 private fun `is`.hi.hbv501g.repx.workouts.domain.WorkoutExercise.toDTO() = WorkoutExerciseDTO(
@@ -102,9 +96,7 @@ private fun `is`.hi.hbv501g.repx.workouts.domain.WorkoutExercise.toDTO() = Worko
     exerciseId = this.exercise.id!!,
     exerciseName = this.exercise.name,
     orderIndex = this.orderIndex,
-    sets = this.sets
-        .sortedBy { it.setIndex }
-        .map { it.toDTO() }
+    sets = this.sets.map { it.toDTO() }
 )
 
 private fun `is`.hi.hbv501g.repx.workouts.domain.LiftSet.toDTO() = SetDTO(

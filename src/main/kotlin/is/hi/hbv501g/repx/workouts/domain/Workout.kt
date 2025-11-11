@@ -2,8 +2,6 @@ package `is`.hi.hbv501g.repx.workouts.domain
 
 import `is`.hi.hbv501g.repx.users.domain.User
 import jakarta.persistence.*
-import org.hibernate.annotations.Fetch
-import org.hibernate.annotations.FetchMode
 import org.hibernate.annotations.UuidGenerator
 import java.time.Instant
 import java.util.*
@@ -39,7 +37,6 @@ data class Workout(
         orphanRemoval = true,
         fetch = FetchType.LAZY
     )
-    @Fetch(FetchMode.SUBSELECT) 
-    @OrderBy("orderIndex ASC")                   
+    @OrderBy("orderIndex ASC")
     val exercises: MutableList<WorkoutExercise> = mutableListOf()
 )

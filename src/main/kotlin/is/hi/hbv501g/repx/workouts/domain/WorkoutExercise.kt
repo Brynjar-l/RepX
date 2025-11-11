@@ -2,6 +2,7 @@ package `is`.hi.hbv501g.repx.workouts.domain
 
 import `is`.hi.hbv501g.repx.exercises.domain.Exercise
 import jakarta.persistence.*
+import org.hibernate.annotations.BatchSize
 import org.hibernate.annotations.Fetch
 import org.hibernate.annotations.FetchMode
 import org.hibernate.annotations.UuidGenerator
@@ -33,7 +34,7 @@ data class WorkoutExercise(
         orphanRemoval = true,
         fetch = FetchType.LAZY
     )
-    @Fetch(FetchMode.SUBSELECT)
     @OrderBy("setIndex ASC")
+    @BatchSize(size = 64)
     val sets: MutableList<LiftSet> = mutableListOf()
 )
