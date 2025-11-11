@@ -2,9 +2,9 @@ package `is`.hi.hbv501g.repx.workouts.domain
 
 import `is`.hi.hbv501g.repx.exercises.domain.Exercise
 import jakarta.persistence.*
-import org.hibernate.annotations.BatchSize
 import org.hibernate.annotations.Fetch
 import org.hibernate.annotations.FetchMode
+import org.hibernate.annotations.UuidGenerator
 import java.util.*
 
 @Entity
@@ -12,6 +12,7 @@ import java.util.*
 data class WorkoutExercise(
     @Id
     @GeneratedValue
+    @UuidGenerator
     @Column(columnDefinition = "uuid")
     val id: UUID? = null,
 
@@ -29,10 +30,10 @@ data class WorkoutExercise(
     @OneToMany(
         mappedBy = "workoutExercise",
         cascade = [CascadeType.ALL],
-        orphanRemoval = true
+        orphanRemoval = true,
+        fetch = FetchType.LAZY
     )
-    @OrderBy("setIndex ASC")
     @Fetch(FetchMode.SUBSELECT)
-    @BatchSize(size = 128)
+    @OrderBy("setIndex ASC")
     val sets: MutableList<LiftSet> = mutableListOf()
 )
