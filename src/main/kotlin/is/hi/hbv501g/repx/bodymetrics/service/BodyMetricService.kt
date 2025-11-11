@@ -49,7 +49,7 @@ class BodyMetricService(
 
     @Transactional(readOnly = true)
     fun listByUser(userId: UUID, pageable: Pageable): Page<BodyMetricDTO> =
-        repo.findByUserId(userId, pageable).map { it.toDTO() }
+        repo.findByUser_Id(userId, pageable).map { it.toDTO() }
 
     @Transactional(readOnly = true)
     fun listByUserAndRange(
@@ -60,17 +60,17 @@ class BodyMetricService(
     ): Page<BodyMetricDTO> {
         return when {
             fromInclusive != null && toInclusive != null ->
-                repo.findByUserIdAndRecordedAtBetween(
+                repo.findByUser_IdAndRecordedAtBetween(
                     userId, fromInclusive.toUtcOffset(), toInclusive.toUtcOffset(), pageable
                 ).map { it.toDTO() }
 
             fromInclusive != null ->
-                repo.findByUserIdAndRecordedAtGreaterThanEqual(
+                repo.findByUser_IdAndRecordedAtGreaterThanEqual(
                     userId, fromInclusive.toUtcOffset(), pageable
                 ).map { it.toDTO() }
 
             toInclusive != null ->
-                repo.findByUserIdAndRecordedAtLessThanEqual(
+                repo.findByUser_IdAndRecordedAtLessThanEqual(
                     userId, toInclusive.toUtcOffset(), pageable
                 ).map { it.toDTO() }
 
@@ -97,7 +97,6 @@ class BodyMetricService(
         if (repo.existsById(id)) { repo.deleteById(id); true } else false
 }
 
-/* Helpers */
 
 private fun Instant.toUtcOffset(): OffsetDateTime = this.atOffset(ZoneOffset.UTC)
 

@@ -8,21 +8,23 @@ import java.time.OffsetDateTime
 import java.util.*
 
 interface BodyMetricRepository : JpaRepository<BodyMetric, UUID> {
-    fun findByUserId(userId: UUID, pageable: Pageable): Page<BodyMetric>
-    fun findByUserIdAndRecordedAtBetween(
+
+    fun findByUser_Id(userId: UUID, pageable: Pageable): Page<BodyMetric>
+
+    fun findByUser_IdAndRecordedAtBetween(
         userId: UUID,
         from: OffsetDateTime,
         to: OffsetDateTime,
         pageable: Pageable
     ): Page<BodyMetric>
 
-    fun findByUserIdAndRecordedAtGreaterThanEqual(
+    fun findByUser_IdAndRecordedAtGreaterThanEqual(
         userId: UUID,
         from: OffsetDateTime,
         pageable: Pageable
     ): Page<BodyMetric>
 
-    fun findByUserIdAndRecordedAtLessThanEqual(
+    fun findByUser_IdAndRecordedAtLessThanEqual(
         userId: UUID,
         to: OffsetDateTime,
         pageable: Pageable
