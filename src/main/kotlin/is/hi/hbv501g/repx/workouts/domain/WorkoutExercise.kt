@@ -2,7 +2,9 @@ package `is`.hi.hbv501g.repx.workouts.domain
 
 import `is`.hi.hbv501g.repx.exercises.domain.Exercise
 import jakarta.persistence.*
-import org.hibernate.annotations.UuidGenerator
+import org.hibernate.annotations.BatchSize
+import org.hibernate.annotations.Fetch
+import org.hibernate.annotations.FetchMode
 import java.util.*
 
 @Entity
@@ -10,7 +12,6 @@ import java.util.*
 data class WorkoutExercise(
     @Id
     @GeneratedValue
-    @UuidGenerator
     @Column(columnDefinition = "uuid")
     val id: UUID? = null,
 
@@ -31,5 +32,7 @@ data class WorkoutExercise(
         orphanRemoval = true
     )
     @OrderBy("setIndex ASC")
+    @Fetch(FetchMode.SUBSELECT)
+    @BatchSize(size = 128)
     val sets: MutableList<LiftSet> = mutableListOf()
 )

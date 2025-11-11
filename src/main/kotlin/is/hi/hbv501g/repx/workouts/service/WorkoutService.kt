@@ -70,7 +70,7 @@ class WorkoutService(
 
     @Transactional(readOnly = true)
     fun get(id: UUID): WorkoutDTO? =
-        workoutRepo.findById(id).orElse(null)?.toDTO()
+        workoutRepo.findWithGraphById(id).orElse(null)?.toDTO()
 
     @Transactional(readOnly = true)
     fun list(pageable: Pageable): Page<WorkoutDTO> =
@@ -92,7 +92,9 @@ private fun `is`.hi.hbv501g.repx.workouts.domain.Workout.toDTO() = WorkoutDTO(
     startTime = this.startTime,
     endTime = this.endTime,
     notes = this.notes,
-    exercises = this.exercises.map { it.toDTO() }
+    exercises = this.exercises
+        .sortedBy { it.orderIndex }
+        .map { it.toDTO() }
 )
 
 private fun `is`.hi.hbv501g.repx.workouts.domain.WorkoutExercise.toDTO() = WorkoutExerciseDTO(
@@ -100,7 +102,9 @@ private fun `is`.hi.hbv501g.repx.workouts.domain.WorkoutExercise.toDTO() = Worko
     exerciseId = this.exercise.id!!,
     exerciseName = this.exercise.name,
     orderIndex = this.orderIndex,
-    sets = this.sets.map { it.toDTO() }
+    sets = this.sets
+        .sortedBy { it.setIndex }
+        .map { it.toDTO() }
 )
 
 private fun `is`.hi.hbv501g.repx.workouts.domain.LiftSet.toDTO() = SetDTO(

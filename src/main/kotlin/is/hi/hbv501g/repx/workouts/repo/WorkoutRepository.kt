@@ -9,9 +9,10 @@ import java.util.*
 
 interface WorkoutRepository : JpaRepository<Workout, UUID> {
 
-    @EntityGraph(attributePaths = ["exercises", "exercises.exercise", "exercises.sets"])
     override fun findAll(pageable: Pageable): Page<Workout>
 
-    @EntityGraph(attributePaths = ["exercises", "exercises.exercise", "exercises.sets"])
     fun findByUser_Id(userId: UUID, pageable: Pageable): Page<Workout>
+
+    @EntityGraph(attributePaths = ["exercises", "exercises.exercise", "exercises.sets"])
+    fun findWithGraphById(id: UUID): Optional<Workout>
 }
