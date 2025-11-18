@@ -2,41 +2,33 @@ package `is`.hi.hbv501g.repx.workouts.domain
 
 import `is`.hi.hbv501g.repx.users.domain.User
 import jakarta.persistence.*
-import org.hibernate.annotations.UuidGenerator
 import java.time.Instant
 import java.util.*
 
 @Entity
 @Table(name = "workouts")
-data class Workout(
+class Workout(
     @Id
-    @GeneratedValue
-    @UuidGenerator
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(columnDefinition = "uuid")
-    val id: UUID? = null,
+    var id: UUID? = null,
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false, columnDefinition = "uuid")
-    val user: User,
+    @JoinColumn(name = "user_id", nullable = false)
+    var user: User,
 
     @Column(nullable = false)
-    val title: String,
+    var title: String,
 
     @Column(name = "start_time", nullable = false)
-    val startTime: Instant,
+    var startTime: Instant,
 
     @Column(name = "end_time")
-    val endTime: Instant? = null,
+    var endTime: Instant? = null,
 
-    @Column(name = "notes")
-    val notes: String? = null,
+    var notes: String? = null,
 
-    @OneToMany(
-        mappedBy = "workout",
-        cascade = [CascadeType.ALL],
-        orphanRemoval = true,
-        fetch = FetchType.LAZY
-    )
+    @OneToMany(mappedBy = "workout", cascade = [CascadeType.ALL], orphanRemoval = true)
     @OrderBy("orderIndex ASC")
-    val exercises: MutableList<WorkoutExercise> = mutableListOf()
+    var exercises: MutableList<WorkoutExercise> = mutableListOf()
 )

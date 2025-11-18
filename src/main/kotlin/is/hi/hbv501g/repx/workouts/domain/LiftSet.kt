@@ -1,38 +1,38 @@
 package `is`.hi.hbv501g.repx.workouts.domain
 
 import jakarta.persistence.*
-import org.hibernate.annotations.UuidGenerator
-import java.math.BigDecimal
 import java.util.*
 
 @Entity
 @Table(name = "sets")
-data class LiftSet(
+class LiftSet(
     @Id
-    @GeneratedValue
-    @UuidGenerator
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(columnDefinition = "uuid")
-    val id: UUID? = null,
+    var id: UUID? = null,
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "workout_exercise_id", nullable = false, columnDefinition = "uuid")
-    val workoutExercise: WorkoutExercise,
+    @JoinColumn(name = "workout_exercise_id", nullable = false)
+    var workoutExercise: WorkoutExercise,
 
     @Column(name = "set_index", nullable = false)
-    val setIndex: Int = 1,
+    var setIndex: Int,
 
-    @Column(name = "reps")
-    val reps: Int? = null,
+    var reps: Int? = null,
 
-    @Column(name = "weight_kg", columnDefinition = "numeric(6,2)")
-    val weightKg: BigDecimal? = null,
+    @Column(name = "weight_kg")
+    var weightKg: Double? = null,
 
-    @Column(name = "rir")
-    val rir: Int? = null,
+    var rir: Int? = null,
 
     @Column(name = "duration_sec")
-    val durationSec: Int? = null,
+    var durationSec: Int? = null,
 
-    @Column(name = "notes")
-    val notes: String? = null
+    @Column(name = "distance_m")
+    var distanceM: Double? = null,
+
+    @Column(name = "set_type", length = 32)
+    var type: String? = null,
+    
+    var notes: String? = null
 )
