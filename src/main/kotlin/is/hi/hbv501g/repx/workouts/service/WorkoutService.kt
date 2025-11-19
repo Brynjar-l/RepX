@@ -56,6 +56,10 @@ class WorkoutService(
     }
 
     @Transactional(readOnly = true)
+    fun listWorkouts(pageable: Pageable): Page<WorkoutDTO> =
+        workoutRepo.findAll(pageable).map { it.toDTO() }
+
+    @Transactional(readOnly = true)
     fun getWorkout(id: UUID): WorkoutDTO? =
         workoutRepo.findById(id).orElse(null)?.toDTO()
 

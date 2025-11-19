@@ -22,6 +22,10 @@ class WorkoutController(
     ): ResponseEntity<WorkoutDTO> =
         ResponseEntity.ok(service.createWorkout(req))
 
+    @GetMapping
+    fun list(pageable: Pageable): Page<WorkoutDTO> =
+        service.listWorkouts(pageable) 
+
     @PostMapping("/from-template")
     fun createFromTemplate(
         @Valid @RequestBody req: CreateFromTemplateRequest
